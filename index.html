@@ -3,57 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced GitPageGen Website Builder</title>
+    <title>SiteSnap Website Builder</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --primary-color: #2563eb;
             --secondary-color: #1e40af;
-            --accent-color: #60a5fa;
-            --background-color: #f8fafc;
-            --sidebar-color: #ffffff;
             --text-color: #1e293b;
-            --border-color: #e2e8f0;
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
-            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
-            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+            --bg-color: #f8fafc;
+            --sidebar-width: 320px;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
 
         body {
             display: flex;
             min-height: 100vh;
-            background: var(--background-color);
+            background: var(--bg-color);
             color: var(--text-color);
         }
 
+        /* Sidebar Styles */
         .sidebar {
-            width: 320px;
-            background: var(--sidebar-color);
-            border-right: 1px solid var(--border-color);
-            padding: 20px;
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            padding: 24px;
             height: 100vh;
             overflow-y: auto;
             position: fixed;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 2px 0 8px rgba(0,0,0,0.05);
         }
 
         .sidebar-header {
-            padding-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .sidebar-header h2 {
-            color: var(--primary-color);
+        .sidebar-header h1 {
             font-size: 1.5rem;
-            margin-bottom: 10px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .components-list {
@@ -62,211 +60,170 @@
         }
 
         .component-category {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        .category-title {
-            font-size: 0.9rem;
+        .component-category h2 {
+            font-size: 0.875rem;
             text-transform: uppercase;
-            color: var(--text-color);
-            margin-bottom: 10px;
-            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
         }
 
         .component {
-            background: var(--sidebar-color);
-            border: 2px solid var(--border-color);
-            padding: 15px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 16px;
             border-radius: 8px;
             cursor: move;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .component i {
+            font-size: 1.25rem;
             color: var(--primary-color);
-            font-size: 1.2rem;
         }
 
         .component:hover {
             border-color: var(--primary-color);
-            background: var(--accent-color);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.15);
+            transform: translateY(-1px);
         }
 
-        .component:hover i {
-            color: white;
-        }
-
+        /* Main Content Styles */
         .main-content {
-            margin-left: 320px;
+            margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 30px;
+            padding: 24px;
         }
 
         .toolbar {
             display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            background: var(--sidebar-color);
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-sm);
+            gap: 12px;
+            margin-bottom: 24px;
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
-        .toolbar button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        .btn {
             display: flex;
             align-items: center;
             gap: 8px;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
             font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .toolbar button:hover {
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
             background: var(--secondary-color);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
         }
 
-        .toolbar button i {
-            font-size: 1.1rem;
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            color: var(--text-color);
+        }
+
+        .btn-outline:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
         }
 
         .canvas {
-            background: var(--sidebar-color);
-            min-height: calc(100vh - 120px);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: var(--shadow-lg);
+            background: white;
+            min-height: calc(100vh - 100px);
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
         }
 
         .drop-zone {
             min-height: 200px;
-            border: 2px dashed var(--border-color);
-            border-radius: 12px;
-            margin: 10px 0;
-            padding: 30px;
-            transition: all 0.3s ease;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            margin: 12px 0;
+            padding: 24px;
+            transition: all 0.2s ease;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .drop-zone.empty {
-            justify-content: center;
             align-items: center;
-            color: #94a3b8;
+            justify-content: center;
+            flex-direction: column;
+            gap: 12px;
+            color: #64748b;
         }
 
-        .drop-zone.empty i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+        .drop-zone i {
+            font-size: 2rem;
         }
 
         .drop-zone.dragover {
-            background: #f1f5f9;
+            background: #f8fafc;
             border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
-        .component-wrapper {
-            position: relative;
-            background: white;
-            border-radius: 8px;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-
-        .component-wrapper:hover {
-            box-shadow: var(--shadow-md);
-        }
-
-        .component-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .component-wrapper:hover .component-controls {
-            opacity: 1;
-        }
-
-        .control-button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-
-        .control-button:hover {
-            background: var(--secondary-color);
-            transform: scale(1.1);
-        }
-
-        .control-button.delete {
-            background: #ef4444;
-        }
-
-        .control-button.delete:hover {
-            background: #dc2626;
-        }
-
-        .preview-modal {
+        /* Preview Modal Styles */
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.75);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(4px);
         }
 
-        .preview-content {
+        .modal-content {
             background: white;
-            margin: 50px auto;
-            padding: 30px;
-            max-width: 1200px;
-            height: 80vh;
+            margin: 40px auto;
+            padding: 24px;
+            max-width: 90%;
+            height: 85vh;
             border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: relative;
             overflow: auto;
-            box-shadow: var(--shadow-lg);
         }
 
-        .close-preview {
-            float: right;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
             cursor: pointer;
-            font-size: 24px;
+            color: #64748b;
+            transition: color 0.2s ease;
+        }
+
+        .close-modal:hover {
             color: var(--text-color);
-            transition: all 0.2s ease;
         }
 
-        .close-preview:hover {
-            color: var(--primary-color);
-            transform: rotate(90deg);
-        }
-
+        /* Responsive Design */
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -286,448 +243,258 @@
             .toolbar {
                 flex-wrap: wrap;
             }
-
-            .preview-content {
-                margin: 20px;
-                height: 90vh;
-            }
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Component Styles */
+        .component-wrapper {
+            position: relative;
+            margin: 12px 0;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--background-color);
+        .component-controls {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
+        .component-wrapper:hover .component-controls {
+            opacity: 1;
+        }
+
+        .control-btn {
+            background: white;
+            border: 1px solid #e2e8f0;
+            width: 32px;
+            height: 32px;
             border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--secondary-color);
+        .control-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .control-btn.delete {
+            color: #ef4444;
+        }
+
+        .control-btn.delete:hover {
+            background: #fef2f2;
+            border-color: #ef4444;
         }
     </style>
 </head>
 <body>
+    <!-- Sidebar -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <h2><i class="fas fa-layer-group"></i> Components</h2>
-            <p>Drag and drop to build your page</p>
+            <h1><i class="fas fa-layer-group"></i> SiteSnap</h1>
         </div>
 
-        <div class="components-list">
-            <div class="component-category">
-                <h3 class="category-title">Layout Components</h3>
+        <div class="component-category">
+            <h2>Layout Components</h2>
+            <div class="components-list">
                 <div class="component" draggable="true" data-type="header">
-                    <i class="fas fa-heading"></i> Header Section
+                    <i class="fas fa-heading"></i>
+                    <span>Header Section</span>
                 </div>
                 <div class="component" draggable="true" data-type="hero">
-                    <i class="fas fa-star"></i> Hero Banner
+                    <i class="fas fa-image"></i>
+                    <span>Hero Section</span>
                 </div>
                 <div class="component" draggable="true" data-type="features">
-                    <i class="fas fa-list"></i> Features Grid
+                    <i class="fas fa-th-large"></i>
+                    <span>Features Grid</span>
                 </div>
             </div>
+        </div>
 
-            <div class="component-category">
-                <h3 class="category-title">Content Components</h3>
-                <div class="component" draggable="true" data-type="gallery">
-                    <i class="fas fa-images"></i> Image Gallery
+        <div class="component-category">
+            <h2>Content Components</h2>
+            <div class="components-list">
+                <div class="component" draggable="true" data-type="about">
+                    <i class="fas fa-info-circle"></i>
+                    <span>About Section</span>
+                </div>
+                <div class="component" draggable="true" data-type="services">
+                    <i class="fas fa-cogs"></i>
+                    <span>Services</span>
                 </div>
                 <div class="component" draggable="true" data-type="testimonials">
-                    <i class="fas fa-quote-right"></i> Testimonials
-                </div>
-                <div class="component" draggable="true" data-type="team">
-                    <i class="fas fa-users"></i> Team Section
+                    <i class="fas fa-quote-right"></i>
+                    <span>Testimonials</span>
                 </div>
             </div>
+        </div>
 
-            <div class="component-category">
-                <h3 class="category-title">Interactive Elements</h3>
+        <div class="component-category">
+            <h2>Interactive Elements</h2>
+            <div class="components-list">
                 <div class="component" draggable="true" data-type="contact">
-                    <i class="fas fa-envelope"></i> Contact Form
+                    <i class="fas fa-envelope"></i>
+                    <span>Contact Form</span>
                 </div>
-                <div class="component" draggable="true" data-type="pricing">
-                    <i class="fas fa-tags"></i> Pricing Table
+                <div class="component" draggable="true" data-type="gallery">
+                    <i class="fas fa-images"></i>
+                    <span>Image Gallery</span>
                 </div>
-                <div class="component" draggable="true" data-type="faq">
-                    <i class="fas fa-question-circle"></i> FAQ Accordion
-                </div>
-            </div>
-
-            <div class="component-category">
-                <h3 class="category-title">Footer Components</h3>
                 <div class="component" draggable="true" data-type="cta">
-                    <i class="fas fa-bullhorn"></i> Call to Action
-                </div>
-                <div class="component" draggable="true" data-type="footer">
-                    <i class="fas fa-shoe-prints"></i> Footer Section
+                    <i class="fas fa-bullhorn"></i>
+                    <span>Call to Action</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
         <div class="toolbar">
-            <button onclick="previewSite()">
-                <i class="fas fa-eye"></i> Preview
+            <button class="btn btn-primary" onclick="previewSite()">
+                <i class="fas fa-eye"></i>
+                Preview
             </button>
-            <button onclick="generateCode()">
-                <i class="fas fa-code"></i> Generate Code
+            <button class="btn btn-outline" onclick="generateCode()">
+                <i class="fas fa-code"></i>
+                Export Code
             </button>
-            <button onclick="saveToGitHub()">
-                <i class="fab fa-github"></i> Save to GitHub
-            </button>
-            <button onclick="undoAction()">
-                <i class="fas fa-undo"></i> Undo
-            </button>
-            <button onclick="clearCanvas()">
-                <i class="fas fa-trash-alt"></i> Clear All
+            <button class="btn btn-outline" onclick="saveToGitHub()">
+                <i class="fab fa-github"></i>
+                Save to GitHub
             </button>
         </div>
-        
+
         <div class="canvas">
-            <div class="drop-zone empty" id="mainDropZone">
+            <div class="drop-zone" id="mainDropZone">
                 <i class="fas fa-plus-circle"></i>
-                <p>Drag and drop components here to build your page</p>
+                <p>Drag and drop components here</p>
             </div>
         </div>
     </div>
 
-    <div class="preview-modal" id="previewModal">
-        <div class="preview-content">
-            <span class="close-preview" onclick="closePreview()">×</span>
+    <!-- Preview Modal -->
+    <div class="modal" id="previewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Preview</h2>
+                <button class="close-modal" onclick="closePreview()">&times;</button>
+            </div>
             <div id="previewContent"></div>
         </div>
     </div>
 
     <script>
-        // Enhanced component templates
+        // Component templates will be defined here
         const templates = {
             header: `
-                <header style="text-align: center; padding: 80px 20px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white;">
-                    <h1 style="font-size: 3rem; margin-bottom: 20px;">Welcome to Your Website</h1>
-                    <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">A beautiful and responsive website built with GitPageGen</p>
+                <header style="background: white; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--primary-color);">Your Logo</div>
+                        <nav>
+                            <a href="#" style="text-decoration: none; color: var(--text-color); margin-left: 20px;">Home</a>
+                            <a href="#" style="text-decoration: none; color: var(--text-color); margin-left: 20px;">About</a>
+                            <a href="#" style="text-decoration: none; color: var(--text-color); margin-left: 20px;">Services</a>
+                            <a href="#" style="text-decoration: none; color: var(--text-color); margin-left: 20px;">Contact</a>
+                        </nav>
+                    </div>
                 </header>
             `,
             hero: `
-                <section style="position: relative; padding: 120px 20px; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/random/1920x1080') center/cover;">
-                    <div style="max-width: 800px; margin: 0 auto; text-align: center; color: white;">
-                        <h1 style="font-size: 3.5rem; margin-bottom: 30px;">Make Your Impact</h1>
-                        <p style="font-size: 1.2rem; margin-bottom: 30px;">Create stunning websites with our drag-and-drop builder</p>
-                        <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer;">Get Started</button>
+                <section style="position: relative; height: 80vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), #1e293b;">
+                    <div style="text-align: center; color: white; padding: 20px;">
+                        <h1 style="font-size: 3rem; margin-bottom: 20px;">Welcome to Your Website</h1>
+                        <p style="font-size: 1.2rem; margin-bottom: 30px;">Create something amazing today</p>
+                        <button style="background: var(--primary-color); color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">Get Started</button>
                     </div>
                 </section>
             `,
-            gallery: `
-                <div style="padding: 60px 20px; background: #f8fafc;">
-                    <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.5rem;">Our Gallery</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
-                        <div style="background: #ddd; height: 300px; border-radius: 12px; overflow: hidden; transition: transform 0.3s;">
-                            <img src="https://source.unsplash.com/random/601x601" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                        <div style="background: #ddd; height: 300px; border-radius: 12px; overflow: hidden; transition: transform 0.3s;">
-                            <img src="https://source.unsplash.com/random/602x602" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                        <div style="background: #ddd; height: 300px; border-radius: 12px; overflow: hidden; transition: transform 0.3s;">
-                            <img src="https://source.unsplash.com/random/603x603" style="width: 100%; height: 100%; object-fit: cover;">
-                        </div>
-                    </div>
-                </div>
-            `,
-            features: `
-                <section style="padding: 80px 20px; background: white;">
-                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Key Features</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto;">
-                        <div style="text-align: center; padding: 30px;">
-                            <i class="fas fa-rocket" style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;"></i>
-                            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Lightning Fast</h3>
-                            <p style="color: #64748b;">Optimized for speed and performance</p>
-                        </div>
-                        <div style="text-align: center; padding: 30px;">
-                            <i class="fas fa-paint-brush" style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;"></i>
-                            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Beautiful Design</h3>
-                            <p style="color: #64748b;">Stunning and modern aesthetics</p>
-                        </div>
-                        <div style="text-align: center; padding: 30px;">
-                            <i class="fas fa-mobile-alt" style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;"></i>
-                            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Responsive</h3>
-                            <p style="color: #64748b;">Works on all devices perfectly</p>
-                        </div>
-                    </div>
-                </section>
-            `,
-            testimonials: `
-                <section style="padding: 80px 20px; background: #f8fafc;">
-                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">What Our Clients Say</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
-                        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <div style="color: #2563eb; font-size: 24px; margin-bottom: 20px;">★★★★★</div>
-                            <p style="margin-bottom: 20px; color: #1e293b;">"Absolutely amazing service! The team went above and beyond our expectations."</p>
-                            <div style="display: flex; align-items: center;">
-                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #2563eb; margin-right: 15px;"></div>
-                                <div>
-                                    <strong>John Doe</strong><br>
-                                    <small style="color: #64748b;">CEO, TechCorp</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <div style="color: #2563eb; font-size: 24px; margin-bottom: 20px;">★★★★★</div>
-                            <p style="margin-bottom: 20px; color: #1e293b;">"The best decision we've made for our business growth!"</p>
-                            <div style="display: flex; align-items: center;">
-                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #2563eb; margin-right: 15px;"></div>
-                                <div>
-                                    <strong>Jane Smith</strong><br>
-                                    <small style="color: #64748b;">Founder, Design Studio</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-            team: `
-                <section style="padding: 80px 20px; background: white;">
-                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Our Team</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
-                        <div style="text-align: center;">
-                            <div style="width: 200px; height: 200px; border-radius: 50%; background: #e2e8f0; margin: 0 auto 20px;"></div>
-                            <h3 style="margin-bottom: 10px; font-size: 1.5rem;">Sarah Johnson</h3>
-                            <p style="color: #2563eb; margin-bottom: 15px;">CEO & Founder</p>
-                            <div style="display: flex; gap: 15px; justify-content: center;">
-                                <i class="fab fa-twitter" style="color: #2563eb; font-size: 1.2rem;"></i>
-                                <i class="fab fa-linkedin" style="color: #2563eb; font-size: 1.2rem;"></i>
-                                <i class="fab fa-github" style="color: #2563eb; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-                        <div style="text-align: center;">
-                            <div style="width: 200px; height: 200px; border-radius: 50%; background: #e2e8f0; margin: 0 auto 20px;"></div>
-                            <h3 style="margin-bottom: 10px; font-size: 1.5rem;">Mike Wilson</h3>
-                            <p style="color: #2563eb; margin-bottom: 15px;">Lead Developer</p>
-                            <div style="display: flex; gap: 15px; justify-content: center;">
-                                <i class="fab fa-twitter" style="color: #2563eb; font-size: 1.2rem;"></i>
-                                <i class="fab fa-linkedin" style="color: #2563eb; font-size: 1.2rem;"></i>
-                                <i class="fab fa-github" style="color: #2563eb; font-size: 1.2rem;"></i>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-            contact: `
-                <section style="padding: 80px 20px; background: #f8fafc;">
-                    <div style="max-width: 600px; margin: 0 auto;">
-                        <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.5rem;">Contact Us</h2>
-                        <form style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 8px; color: #1e293b;">Name</label>
-                                <input type="text" placeholder="Your name" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            </div>
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 8px; color: #1e293b;">Email</label>
-                                <input type="email" placeholder="your@email.com" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
-                            </div>
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 8px; color: #1e293b;">Message</label>
-                                <textarea placeholder="Your message" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; min-height: 150px;"></textarea>
-                            </div>
-                            <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 6px; width: 100%; font-size: 1.1rem; cursor: pointer;">Send Message</button>
-                        </form>
-                    </div>
-                </section>
-            `,
-            pricing: `
-                <section style="padding: 80px 20px; background: white;">
-                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Pricing Plans</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
-                        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
-                            <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Basic</h3>
-                            <div style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;">$29<span style="font-size: 1rem; color: #64748b;">/month</span></div>
-                            <ul style="text-align: left; margin-bottom: 30px; list-style: none;">
-                                <li style="margin-bottom: 10px;">✓ Feature 1</li>
-                                <li style="margin-bottom: 10px;">✓ Feature 2</li>
-                                <li style="margin-bottom: 10px;">✓ Feature 3</li>
-                            </ul>
-                            <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 6px; width: 100%; font-size: 1.1rem; cursor: pointer;">Get Started</button>
-                        </div>
-                        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; position: relative; border: 2px solid #2563eb;">
-                            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #2563eb; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">POPULAR</div>
-                            <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Pro</h3>
-                            <div style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;">$99<span style="font-size: 1rem; color: #64748b;">/month</span></div>
-                            <ul style="text-align: left; margin-bottom: 30px; list-style: none;">
-                                <li style="margin-bottom: 10px;">✓ All Basic Features</li>
-                                <li style="margin-bottom: 10px;">✓ Pro Feature 1</li>
-                                <li style="margin-bottom: 10px;">✓ Pro Feature 2</li>
-                                <li style="margin-bottom: 10px;">✓ Pro Feature 3</li>
-                            </ul>
-                            <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 6px; width: 100%; font-size: 1.1rem; cursor: pointer;">Get Started</button>
-                        </div>
-                    </div>
-                </section>
-            `,
-            faq: `
-                <section style="padding: 80px 20px; background: #f8fafc;">
-                    <div style="max-width: 800px; margin: 0 auto;">
-                        <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Frequently Asked Questions</h2>
-                        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            <div style="border-bottom: 1px solid #e2e8f0;">
-                                <button onclick="this.parentElement.querySelector('.answer').classList.toggle('show')" style="width: 100%; text-align: left; padding: 20px; background: none; border: none; font-size: 1.1rem; cursor: pointer;">
-                                    Question 1?
-                                </button>
-                                <div class="answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;">
-                                    <p style="margin-bottom: 20px; color: #64748b;">Answer to question 1 goes here. This is a detailed explanation that helps users understand the topic better.</p>
-                                </div>
-                            </div>
-                            <div style="border-bottom: 1px solid #e2e8f0;">
-                                <button onclick="this.parentElement.querySelector('.answer').classList.toggle('show')" style="width: 100%; text-align: left; padding: 20px; background: none; border: none; font-size: 1.1rem; cursor: pointer;">
-                                    Question 2?
-                                </button>
-                                <div class="answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;">
-                                    <p style="margin-bottom: 20px; color: #64748b;">Answer to question 2 goes here. This is a detailed explanation that helps users understand the topic better.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-            `,
-            cta: `
-                <section style="padding: 100px 20px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; text-align: center;">
-                    <div style="max-width: 800px; margin: 0 auto;">
-                        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ready to Get Started?</h2>
-                        <p style="margin-bottom: 40px; font-size: 1.2rem;">Join thousands of satisfied customers who trust our services</p>
-                        <button style="background: white; color: #2563eb; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: bold;">Get Started Now</button>
-                    </div>
-                </section>
-            `,
-            footer: `
-                <footer style="background: #1e293b; color: white; padding: 80px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
-                <div>
-                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">About Us</h3>
-                    <p style="line-height: 1.6;">Your company description goes here. Share your story and mission with your visitors.</p>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Quick Links</h3>
-                    <ul style="list-style: none;">
-                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">Home</a></li>
-                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">Services</a></li>
-                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">About</a></li>
-                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">Contact</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Contact Info</h3>
-                    <p style="margin-bottom: 10px;">Email: info@example.com</p>
-                    <p style="margin-bottom: 10px;">Phone: (123) 456-7890</p>
-                    <p>Address: 123 Street Name, City, Country</p>
-                </div>
-                <div>
-                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Follow Us</h3>
-                    <div style="display: flex; gap: 15px;">
-                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
-                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
-                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
-                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                <p>&copy; 2024 Your Company. All rights reserved.</p>
-            </div>
-        </footer>
-    `;
+            // Add more component templates as needed
+        };
 
-// Add new advanced components
-const advancedComponents = {
-    hero: `
-        <section style="position: relative; height: 80vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://source.unsplash.com/random/1920x1080') center/cover;">
-            <div style="text-align: center; color: white; padding: 20px;">
-                <h1 style="font-size: 3rem; margin-bottom: 20px;">Welcome to Your Website</h1>
-                <p style="font-size: 1.2rem; margin-bottom: 30px;">Your compelling tagline goes here</p>
-                <button style="background: var(--primary-color); color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">Get Started</button>
-            </div>
-        </section>
-    `,
-    
-    services: `
-        <section style="padding: 80px 20px; background: #f8fafc;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">Our Services</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
-                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <i class="fas fa-laptop-code" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
-                        <h3 style="margin-bottom: 15px;">Web Development</h3>
-                        <p>Professional web development services tailored to your needs.</p>
-                    </div>
-                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <i class="fas fa-mobile-alt" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
-                        <h3 style="margin-bottom: 15px;">Mobile Apps</h3>
-                        <p>Custom mobile applications for iOS and Android platforms.</p>
-                    </div>
-                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
-                        <h3 style="margin-bottom: 15px;">Digital Marketing</h3>
-                        <p>Comprehensive digital marketing solutions for your business.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    `,
-    
-    team: `
-        <section style="padding: 80px 20px;">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">Our Team</h2>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
-                    <div style="text-align: center;">
-                        <div style="width: 200px; height: 200px; border-radius: 50%; background: #ddd; margin: 0 auto 20px;"></div>
-                        <h3 style="margin-bottom: 10px;">John Doe</h3>
-                        <p style="color: var(--primary-color);">CEO & Founder</p>
-                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-                            <a href="#" style="color: var(--text-color);"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" style="color: var(--text-color);"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="width: 200px; height: 200px; border-radius: 50%; background: #ddd; margin: 0 auto 20px;"></div>
-                        <h3 style="margin-bottom: 10px;">Jane Smith</h3>
-                        <p style="color: var(--primary-color);">Lead Developer</p>
-                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-                            <a href="#" style="color: var(--text-color);"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" style="color: var(--text-color);"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="width: 200px; height: 200px; border-radius: 50%; background: #ddd; margin: 0 auto 20px;"></div>
-                        <h3 style="margin-bottom: 10px;">Mike Johnson</h3>
-                        <p style="color: var(--primary-color);">Designer</p>
-                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
-                            <a href="#" style="color: var(--text-color);"><i class="fab fa-linkedin"></i></a>
-                            <a href="#" style="color: var(--text-color);"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    `
-};
+        // Drag and Drop functionality
+        document.querySelectorAll('.component').forEach(component => {
+            component.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', component.dataset.type);
+            });
+        });
 
-// Add the new components to the templates object
-Object.assign(templates, advancedComponents);
+        const dropZone = document.getElementById('mainDropZone');
 
-// Update the sidebar with new components
-const componentsList = document.querySelector('.components-list');
-componentsList.innerHTML += `
-    <div class="component" draggable="true" data-type="hero">
-        <i class="fas fa-image"></i> Hero Section
-    </div>
-    <div class="component" draggable="true" data-type="services">
-        <i class="fas fa-cogs"></i> Services Section
-    </div>
-    <div class="component" draggable="true" data-type="team">
-        <i class="fas fa-users"></i> Team Section
-    </div>
-`;
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const componentType = e.dataTransfer.getData('text/plain');
+            
+            if (templates[componentType]) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'component-wrapper';
+                wrapper.innerHTML = templates[componentType];
+                
+                const controls = document.createElement('div');
+                controls.className = 'component-controls';
+                controls.innerHTML = `
+                    <button class="control-btn delete" onclick="this.closest('.component-wrapper').remove()">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <button class="control-btn" onclick="moveComponent(this.closest('.component-wrapper'), 'up')">
+                        <i class="fas fa-arrow-up"></i>
+                    </button>
+                    <button class="control-btn" onclick="moveComponent(this.closest('.component-wrapper'), 'down')">
+                        <i class="fas fa-arrow-down"></i>
+                    </button>
+                `;
+                
+                wrapper.appendChild(controls);
+                dropZone.appendChild(wrapper);
+            }
+        });
+
+        function moveComponent(component, direction) {
+            if (direction === 'up' && component.previousElementSibling) {
+                component.parentNode.insertBefore(component, component.previousElementSibling);
+            } else if (direction === 'down' && component.nextElementSibling) {
+                component.parentNode.insertBefore(component.nextElementSibling, component);
+            }
+        }
+
+        function previewSite() {
+            const previewModal = document.getElementById('previewModal');
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = dropZone.innerHTML;
+            previewModal.style.display = 'block';
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        function generateCode() {
+            // Implementation for code generation
+            alert('Code generation feature coming soon!');
+        }
+
+        function saveToGitHub() {
+            // Implementation for GitHub integration
+            alert('GitHub integration coming soon!');
+        }
+    </script>
+</body>
+</html>
