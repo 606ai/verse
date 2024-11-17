@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced GitPageGen Website Builder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #60a5fa;
+            --background-color: #f8fafc;
+            --sidebar-color: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--sidebar-color);
+            border-right: 1px solid var(--border-color);
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            position: fixed;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-header {
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .sidebar-header h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .components-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .component-category {
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--text-color);
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .component {
+            background: var(--sidebar-color);
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+            cursor: move;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .component i {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .component:hover {
+            border-color: var(--primary-color);
+            background: var(--accent-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .component:hover i {
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 320px;
+            flex: 1;
+            padding: 30px;
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            background: var(--sidebar-color);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toolbar button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .toolbar button:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .toolbar button i {
+            font-size: 1.1rem;
+        }
+
+        .canvas {
+            background: var(--sidebar-color);
+            min-height: calc(100vh - 120px);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .drop-zone {
+            min-height: 200px;
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            margin: 10px 0;
+            padding: 30px;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .drop-zone.empty {
+            justify-content: center;
+            align-items: center;
+            color: #94a3b8;
+        }
+
+        .drop-zone.empty i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .drop-zone.dragover {
+            background: #f1f5f9;
+            border-color: var(--primary-color);
+        }
+
+        .component-wrapper {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .component-wrapper:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .component-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .component-wrapper:hover .component-controls {
+            opacity: 1;
+        }
+
+        .control-button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .control-button:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .control-button.delete {
+            background: #ef4444;
+        }
+
+        .control-button.delete:hover {
+            background: #dc2626;
+        }
+
+        .preview-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .preview-content {
+            background: white;
+            margin: 50px auto;
+            padding: 30px;
+            max-width: 1200px;
+            height: 80vh;
+            border-radius: 12px;
+            overflow: auto;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .close-preview {
+            float: right;
+            cursor: pointer;
+            font-size: 24px;
+            color: var(--text-color);
+            transition: all 0.2s ease;
+        }
+
+        .close-preview:hover {
+            color: var(--primary-color);
+            transform: rotate(90deg);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+
+            body {
+                flex-direction: column;
+            }
+
+            .toolbar {
+                flex-wrap: wrap;
+            }
+
+            .preview-content {
+                margin: 20px;
+                height: 90vh;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background-color);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2><i class="fas fa-layer-group"></i> Components</h2>
+            <p>Drag and drop to build your page</p>
+        </div>
+
+        <div class="components-list">
+            <div class="component-category">
+                <h3 class="category-title">Layout Components</h3>
+                <div class="component" draggable="true" data-type="header">
+                    <i class="fas fa-heading"></i> Header Section
+                </div>
+                <div class="component" draggable="true" data-type="hero">
+                    <i class="fas fa-star"></i> Hero Banner
+                </div>
+                <div class="component" draggable="true" data-type="features">
+                    <i class="fas fa-list"></i> Features Grid
+                </div>
+            </div>
+
+            <div class="component-category">
+                <h3 class="category-title">Content Components</h3>
+                <div class="component" draggable="true" data-type="gallery">
+                    <i class="fas fa-images"></i> Image Gallery
+                </div>
+                <div class="component" draggable="true" data-type="testimonials">
+                    <i class="fas fa-quote-right"></i> Testimonials
+                </div>
+                <div class="component" draggable="true" data-type="team">
+                    <i class="fas fa-users"></i> Team Section
+                </div>
+            </div>
+
+            <div class="component-category">
+                <h3 class="category-title">Interactive Elements</h3>
+                <div class="component" draggable="true" data-type="contact">
+                    <i class="fas fa-envelope"></i> Contact Form
+                </div>
+                <div class="component" draggable="true" data-type="pricing">
+                    <i class="fas fa-tags"></i> Pricing Table
+                </div>
+                <div class="component" draggable="true" data-type="faq">
+                    <i class="fas fa-question-circle"></i> FAQ Accordion
+                </div>
+            </div>
+
+            <div class="component-category">
+                <h3 class="category-title">Footer Components</h3>
+                <div class="component" draggable="true" data-type="cta">
+                    <i class="fas fa-bullhorn"></i> Call to Action
+                </div>
+                <div class="component" draggable="true" data-type="footer">
+                    <i class="fas fa-shoe-prints"></i> Footer Section
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="toolbar">
+            <button onclick="previewSite()">
+                <i class="fas fa-eye"></i> Preview
+            </button>
+            <button onclick="generateCode()">
+                <i class="fas fa-code"></i> Generate Code
+            </button>
+            <button onclick="saveToGitHub()">
+                <i class="fab fa-github"></i> Save to GitHub
+            </button>
+            <button onclick="undoAction()">
+                <i class="fas fa-undo"></i> Undo
+            </button>
+            <button onclick="clearCanvas()">
+                <i class="fas fa-trash-alt"></i> Clear All
+            </button>
+        </div>
+        
+        <div class="canvas">
+            <div class="drop-zone empty" id="mainDropZone">
+                <i class="fas fa-plus-circle"></i>
+                <p>Drag and drop components here to build your page</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-content">
+            <span class="close-preview" onclick="closePreview()">×</span>
+            <div id="previewContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced component templates
+        const templates = {
+            header: `
+                <header style="text-align: center; padding: 80px 20px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white;">
+                    <h1 style="font-size: 3rem; margin-bottom: 20px;">Welcome to Your Website</h1>
+                    <p style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">A beautiful and responsive website built with GitPageGen</p>
+                </header>
+            `,
+            hero: `
+                <section style="position: relative; padding: 120px 20px; background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/random/1920x1080') center/cover;">
+                    <div style="max-width: 800px; margin: 0 auto; text-align: center; color: white;">
+                        <h1 style="font-size: 3.5rem; margin-bottom: 30px;">Make Your Impact</h1>
+                        <p style="font-size: 1.2rem; margin-bottom: 30px;">Create stunning websites with our drag-and-drop builder</p>
+                        <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer;">Get Started</button>
+                    </div>
+                </section>
+            `,
+            gallery: `
+                <div style="padding: 60px 20px; background: #f8fafc;">
+                    <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.5rem;">Our Gallery</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+                        <div style="background: #ddd; height: 300px; border-radius: 12px; overflow: hidden; transition: transform 0.3s;">
+                            <img src="https://source.unsplash.com/random/601x601" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="background: #ddd; height: 300px; border-radius: 12px; overflow: hidden; transition: transform 0.3s;">
+                            <img src="https://source.unsplash.com/random/602x602" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="background: #ddd; height: 300px; border-radius: 12px; overflow: hidden; transition: transform 0.3s;">
+                            <img src="https://source.unsplash.com/random/603x603" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                    </div>
+                </div>
+            `,
+            features: `
+                <section style="padding: 80px 20px; background: white;">
+                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Key Features</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto;">
+                        <div style="text-align: center; padding: 30px;">
+                            <i class="fas fa-rocket" style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Lightning Fast</h3>
+                            <p style="color: #64748b;">Optimized for speed and performance</p>
+                        </div>
+                        <div style="text-align: center; padding: 30px;">
+                            <i class="fas fa-paint-brush" style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Beautiful Design</h3>
+                            <p style="color: #64748b;">Stunning and modern aesthetics</p>
+                        </div>
+                        <div style="text-align: center; padding: 30px;">
+                            <i class="fas fa-mobile-alt" style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;"></i>
+                            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Responsive</h3>
+                            <p style="color: #64748b;">Works on all devices perfectly</p>
+                        </div>
+                    </div>
+                </section>
+            `,
+            testimonials: `
+                <section style="padding: 80px 20px; background: #f8fafc;">
+                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">What Our Clients Say</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+                        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="color: #2563eb; font-size: 24px; margin-bottom: 20px;">★★★★★</div>
+                            <p style="margin-bottom: 20px; color: #1e293b;">"Absolutely amazing service! The team went above and beyond our expectations."</p>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #2563eb; margin-right: 15px;"></div>
+                                <div>
+                                    <strong>John Doe</strong><br>
+                                    <small style="color: #64748b;">CEO, TechCorp</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="color: #2563eb; font-size: 24px; margin-bottom: 20px;">★★★★★</div>
+                            <p style="margin-bottom: 20px; color: #1e293b;">"The best decision we've made for our business growth!"</p>
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #2563eb; margin-right: 15px;"></div>
+                                <div>
+                                    <strong>Jane Smith</strong><br>
+                                    <small style="color: #64748b;">Founder, Design Studio</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            team: `
+                <section style="padding: 80px 20px; background: white;">
+                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Our Team</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+                        <div style="text-align: center;">
+                            <div style="width: 200px; height: 200px; border-radius: 50%; background: #e2e8f0; margin: 0 auto 20px;"></div>
+                            <h3 style="margin-bottom: 10px; font-size: 1.5rem;">Sarah Johnson</h3>
+                            <p style="color: #2563eb; margin-bottom: 15px;">CEO & Founder</p>
+                            <div style="display: flex; gap: 15px; justify-content: center;">
+                                <i class="fab fa-twitter" style="color: #2563eb; font-size: 1.2rem;"></i>
+                                <i class="fab fa-linkedin" style="color: #2563eb; font-size: 1.2rem;"></i>
+                                <i class="fab fa-github" style="color: #2563eb; font-size: 1.2rem;"></i>
+                            </div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="width: 200px; height: 200px; border-radius: 50%; background: #e2e8f0; margin: 0 auto 20px;"></div>
+                            <h3 style="margin-bottom: 10px; font-size: 1.5rem;">Mike Wilson</h3>
+                            <p style="color: #2563eb; margin-bottom: 15px;">Lead Developer</p>
+                            <div style="display: flex; gap: 15px; justify-content: center;">
+                                <i class="fab fa-twitter" style="color: #2563eb; font-size: 1.2rem;"></i>
+                                <i class="fab fa-linkedin" style="color: #2563eb; font-size: 1.2rem;"></i>
+                                <i class="fab fa-github" style="color: #2563eb; font-size: 1.2rem;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            contact: `
+                <section style="padding: 80px 20px; background: #f8fafc;">
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <h2 style="text-align: center; margin-bottom: 40px; font-size: 2.5rem;">Contact Us</h2>
+                        <form style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; color: #1e293b;">Name</label>
+                                <input type="text" placeholder="Your name" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; color: #1e293b;">Email</label>
+                                <input type="email" placeholder="your@email.com" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px;">
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <label style="display: block; margin-bottom: 8px; color: #1e293b;">Message</label>
+                                <textarea placeholder="Your message" style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 6px; min-height: 150px;"></textarea>
+                            </div>
+                            <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 6px; width: 100%; font-size: 1.1rem; cursor: pointer;">Send Message</button>
+                        </form>
+                    </div>
+                </section>
+            `,
+            pricing: `
+                <section style="padding: 80px 20px; background: white;">
+                    <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Pricing Plans</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+                        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center;">
+                            <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Basic</h3>
+                            <div style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;">$29<span style="font-size: 1rem; color: #64748b;">/month</span></div>
+                            <ul style="text-align: left; margin-bottom: 30px; list-style: none;">
+                                <li style="margin-bottom: 10px;">✓ Feature 1</li>
+                                <li style="margin-bottom: 10px;">✓ Feature 2</li>
+                                <li style="margin-bottom: 10px;">✓ Feature 3</li>
+                            </ul>
+                            <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 6px; width: 100%; font-size: 1.1rem; cursor: pointer;">Get Started</button>
+                        </div>
+                        <div style="background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; position: relative; border: 2px solid #2563eb;">
+                            <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #2563eb; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;">POPULAR</div>
+                            <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Pro</h3>
+                            <div style="font-size: 3rem; color: #2563eb; margin-bottom: 20px;">$99<span style="font-size: 1rem; color: #64748b;">/month</span></div>
+                            <ul style="text-align: left; margin-bottom: 30px; list-style: none;">
+                                <li style="margin-bottom: 10px;">✓ All Basic Features</li>
+                                <li style="margin-bottom: 10px;">✓ Pro Feature 1</li>
+                                <li style="margin-bottom: 10px;">✓ Pro Feature 2</li>
+                                <li style="margin-bottom: 10px;">✓ Pro Feature 3</li>
+                            </ul>
+                            <button style="background: #2563eb; color: white; padding: 15px 30px; border: none; border-radius: 6px; width: 100%; font-size: 1.1rem; cursor: pointer;">Get Started</button>
+                        </div>
+                    </div>
+                </section>
+            `,
+            faq: `
+                <section style="padding: 80px 20px; background: #f8fafc;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <h2 style="text-align: center; margin-bottom: 60px; font-size: 2.5rem;">Frequently Asked Questions</h2>
+                        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <div style="border-bottom: 1px solid #e2e8f0;">
+                                <button onclick="this.parentElement.querySelector('.answer').classList.toggle('show')" style="width: 100%; text-align: left; padding: 20px; background: none; border: none; font-size: 1.1rem; cursor: pointer;">
+                                    Question 1?
+                                </button>
+                                <div class="answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;">
+                                    <p style="margin-bottom: 20px; color: #64748b;">Answer to question 1 goes here. This is a detailed explanation that helps users understand the topic better.</p>
+                                </div>
+                            </div>
+                            <div style="border-bottom: 1px solid #e2e8f0;">
+                                <button onclick="this.parentElement.querySelector('.answer').classList.toggle('show')" style="width: 100%; text-align: left; padding: 20px; background: none; border: none; font-size: 1.1rem; cursor: pointer;">
+                                    Question 2?
+                                </button>
+                                <div class="answer" style="padding: 0 20px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out;">
+                                    <p style="margin-bottom: 20px; color: #64748b;">Answer to question 2 goes here. This is a detailed explanation that helps users understand the topic better.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `,
+            cta: `
+                <section style="padding: 100px 20px; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; text-align: center;">
+                    <div style="max-width: 800px; margin: 0 auto;">
+                        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ready to Get Started?</h2>
+                        <p style="margin-bottom: 40px; font-size: 1.2rem;">Join thousands of satisfied customers who trust our services</p>
+                        <button style="background: white; color: #2563eb; padding: 15px 40px; border: none; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: bold;">Get Started Now</button>
+                    </div>
+                </section>
+            `,
+            footer: `
+                <footer style="background: #1e293b; color: white; padding: 80px 20px;">
+            <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px;">
+                <div>
+                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">About Us</h3>
+                    <p style="line-height: 1.6;">Your company description goes here. Share your story and mission with your visitors.</p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Quick Links</h3>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">Home</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">Services</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">About</a></li>
+                        <li style="margin-bottom: 10px;"><a href="#" style="color: white; text-decoration: none;">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Contact Info</h3>
+                    <p style="margin-bottom: 10px;">Email: info@example.com</p>
+                    <p style="margin-bottom: 10px;">Phone: (123) 456-7890</p>
+                    <p>Address: 123 Street Name, City, Country</p>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 20px; font-size: 1.2rem;">Follow Us</h3>
+                    <div style="display: flex; gap: 15px;">
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-instagram"></i></a>
+                        <a href="#" style="color: white; font-size: 1.5rem;"><i class="fab fa-linkedin"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <p>&copy; 2024 Your Company. All rights reserved.</p>
+            </div>
+        </footer>
+    `;
+
+// Add new advanced components
+const advancedComponents = {
+    hero: `
+        <section style="position: relative; height: 80vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://source.unsplash.com/random/1920x1080') center/cover;">
+            <div style="text-align: center; color: white; padding: 20px;">
+                <h1 style="font-size: 3rem; margin-bottom: 20px;">Welcome to Your Website</h1>
+                <p style="font-size: 1.2rem; margin-bottom: 30px;">Your compelling tagline goes here</p>
+                <button style="background: var(--primary-color); color: white; padding: 15px 30px; border: none; border-radius: 30px; font-size: 1.1rem; cursor: pointer;">Get Started</button>
+            </div>
+        </section>
+    `,
+    
+    services: `
+        <section style="padding: 80px 20px; background: #f8fafc;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">Our Services</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <i class="fas fa-laptop-code" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Web Development</h3>
+                        <p>Professional web development services tailored to your needs.</p>
+                    </div>
+                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <i class="fas fa-mobile-alt" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Mobile Apps</h3>
+                        <p>Custom mobile applications for iOS and Android platforms.</p>
+                    </div>
+                    <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h3 style="margin-bottom: 15px;">Digital Marketing</h3>
+                        <p>Comprehensive digital marketing solutions for your business.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `,
+    
+    team: `
+        <section style="padding: 80px 20px;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">Our Team</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px;">
+                    <div style="text-align: center;">
+                        <div style="width: 200px; height: 200px; border-radius: 50%; background: #ddd; margin: 0 auto 20px;"></div>
+                        <h3 style="margin-bottom: 10px;">John Doe</h3>
+                        <p style="color: var(--primary-color);">CEO & Founder</p>
+                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                            <a href="#" style="color: var(--text-color);"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" style="color: var(--text-color);"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 200px; height: 200px; border-radius: 50%; background: #ddd; margin: 0 auto 20px;"></div>
+                        <h3 style="margin-bottom: 10px;">Jane Smith</h3>
+                        <p style="color: var(--primary-color);">Lead Developer</p>
+                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                            <a href="#" style="color: var(--text-color);"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" style="color: var(--text-color);"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="width: 200px; height: 200px; border-radius: 50%; background: #ddd; margin: 0 auto 20px;"></div>
+                        <h3 style="margin-bottom: 10px;">Mike Johnson</h3>
+                        <p style="color: var(--primary-color);">Designer</p>
+                        <div style="display: flex; justify-content: center; gap: 15px; margin-top: 15px;">
+                            <a href="#" style="color: var(--text-color);"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" style="color: var(--text-color);"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    `
+};
+
+// Add the new components to the templates object
+Object.assign(templates, advancedComponents);
+
+// Update the sidebar with new components
+const componentsList = document.querySelector('.components-list');
+componentsList.innerHTML += `
+    <div class="component" draggable="true" data-type="hero">
+        <i class="fas fa-image"></i> Hero Section
+    </div>
+    <div class="component" draggable="true" data-type="services">
+        <i class="fas fa-cogs"></i> Services Section
+    </div>
+    <div class="component" draggable="true" data-type="team">
+        <i class="fas fa-users"></i> Team Section
+    </div>
+`;
